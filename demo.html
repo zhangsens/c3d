@@ -6,50 +6,37 @@
 
 <body>
     <canvas width="1200" height="800"></canvas>
+    <script src="./src/point.js"></script>
     <script src="./src/c3d.js"></script>
     <script>
         const cv = document.querySelector("canvas");
         const ctx = cv.getContext("2d");
         //人类的视野范围大概120°
-        const video = new point(600, 400, 0);
+        const video = [600, 400, 0];
 
-        function point(x, y, z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.canvasX = this.x - this.y / 2;
-            this.canvasY = -this.z + this.y / 2;
-        }
-        var a = new point(0, 0, 0);
-        var b = new point(100, 0, 0);
-        var c = new point(0, 100, 0);
-        var d = new point(0, 0, 100);
-        var e = new point(100, 100, 0);
-        var f = new point(100, 0, 100);
-        var g = new point(0, 100, 100);
-        var h = new point(100, 100, 100);
-        var _data = [a, [
-            [b, [
-                [e, [
-                    [h]
-                ]],
-                [f, [
-                    [h]
-                ]]
-            ]],
-            [c, [
-                [e, [h]],
-                [g, [h]]
-            ]],
-            [d, [
-                [f, [h]],
-                [g, [h]]
-            ]]
-        ]];
+        var a = [-100, -100, -100];
+        var b = [100, -100, -100];
+        var c = [-100, 100, -100];
+        var d = [-100, -100, 100];
+        var e = [100, 100, -100];
+        var f = [100, -100, 100];
+        var g = [-100, 100, 100];
+        var h = [100, 100, 100];
+        var _data = [
+            [a, b, c, d],
+            [b, a, e, f],
+            [c, a, e, g],
+            [d, a, f, g],
+            [e, c, b, h],
+            [f, b, d, h],
+            [g, c, d, h],
+            [h, e, f, g]
+        ];
 
-        var _c3d = new c3d(ctx, _data);
-        _c3d.video(video);
-        _c3d.draw(_data);
+        var _c3d = new c3d(ctx);
+        var __data = _c3d.dereplication(_data);
+        //_c3d.axis([cv.width / 3, cv.height / 3, 0]);
+        _c3d.draw(_c3d.data(_data));
         //_c3d.run();
     </script>
 </body>
