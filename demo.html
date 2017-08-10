@@ -1,0 +1,57 @@
+<html>
+
+<head>
+    <title>c3d</title>
+</head>
+
+<body>
+    <canvas width="1200" height="800"></canvas>
+    <script src="./src/c3d.js"></script>
+    <script>
+        const cv = document.querySelector("canvas");
+        const ctx = cv.getContext("2d");
+        //人类的视野范围大概120°
+        const video = new point(600, 400, 0);
+
+        function point(x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.canvasX = this.x - this.y / 2;
+            this.canvasY = -this.z + this.y / 2;
+        }
+        var a = new point(0, 0, 0);
+        var b = new point(100, 0, 0);
+        var c = new point(0, 100, 0);
+        var d = new point(0, 0, 100);
+        var e = new point(100, 100, 0);
+        var f = new point(100, 0, 100);
+        var g = new point(0, 100, 100);
+        var h = new point(100, 100, 100);
+        var _data = [a, [
+            [b, [
+                [e, [
+                    [h]
+                ]],
+                [f, [
+                    [h]
+                ]]
+            ]],
+            [c, [
+                [e, [h]],
+                [g, [h]]
+            ]],
+            [d, [
+                [f, [h]],
+                [g, [h]]
+            ]]
+        ]];
+
+        var _c3d = new c3d(ctx, _data);
+        _c3d.video(video);
+        _c3d.draw(_data);
+        //_c3d.run();
+    </script>
+</body>
+
+</html>
