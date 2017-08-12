@@ -5,7 +5,7 @@ var c3d = function(ctx) {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this._axis = new point(0, 0, 0);
-    this.axis([this.width / 2, this.height / 2, 0]);
+    this.axis([this.width / 2, 0, this.height / 2]);
 }
 
 c3d.prototype = {
@@ -22,10 +22,10 @@ c3d.prototype = {
     },
 
     draw: function(data) {
+        this.ctx.strokeStyle = "hsla(0,0%,0%,1)";
         for (let m in data) {
             for (let n in data[m]) {
                 this.ctx.beginPath();
-                console.log(data[m][0]);
                 this.ctx.moveTo(data[m][0].canvasX, data[m][0].canvasY);
                 this.ctx.lineTo(data[m][n].canvasX, data[m][n].canvasY);
                 this.ctx.stroke();
@@ -45,24 +45,41 @@ c3d.prototype = {
         // console.log(_data[1][1]);
         // console.log(_data[0][0] == _data[1][1]);
     },
-    axis: function(axis) {
+    axis: function(data) {
         this.clearCanvas();
         this.ctx.translate(-this._axis.x, -this._axis.y);
-        this._axis = new point(axis[0], axis[1], axis[2]);
-        this.ctx.translate(this._axis.x, this._axis.y);
-        //X
+        this._axis = new axis(data[0], data[1], data[2]);
+        this.ctx.translate(this._axis.x, this._axis.z);
+        //axis
+        var a = (400 - 400 * Math.cos(this._axis.angleY)) / 400 * Math.sqrt(400 * 400 - 400 * Math.cos(this._axis.angleX) * 400 * Math.cos(this._axis.angleX))
+        var b = (400 - 400 * Math.cos(this._axis.angleX)) / 400 * Math.sqrt(400 * 400 - 400 * Math.cos(this._axis.angleY) * 400 * Math.cos(this._axis.angleY))
         this.ctx.beginPath();
+        this.ctx.strokeStyle = "hsla(0,100%,50%,1)";
         this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(400, 0);
+        this.ctx.lineTo(400 * Math.cos(this._axis.angleX), a);
         this.ctx.stroke();
         this.ctx.beginPath();
+        this.ctx.strokeStyle = "hsla(240,100%,50%,1)";
         this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(-400, 400);
+        this.ctx.lineTo(-400 * Math.sin(this._axis.angleX), 400 * Math.cos(this._axis.angleY));
         this.ctx.stroke();
         this.ctx.beginPath();
+        this.ctx.strokeStyle = "hsla(60,100%,50%,1)";
         this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(0, -400);
+        this.ctx.lineTo(0, -400 * Math.cos(this._axis.angleY));
         this.ctx.stroke();
+    },
+
+    //旋转
+    rotate: function() {
+        //横向距离
+        var rotateX = 20;
+        //纵向距离
+        var rotateY = 20;
+        //?
+        var rotateZ = 0;
+        //对X,y,Z处理
+
     },
 
     clearCanvas: function() {
