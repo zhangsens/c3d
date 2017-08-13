@@ -10,23 +10,31 @@ var c3d = function(ctx) {
     this.t = new d3(100, 100, 100);
     this._t = new d3(100, -100, 100);
     this.axis([this.width / 2, 0, this.height / 2]);
-    // this.canvas.addEventListener("mousedown", this.mousedown.bind(this), false);
-    // this.canvas.addEventListener("mousemove", this.mousemove.bind(this), false);
+    this.canvas.addEventListener("mousedown", this.mousedown.bind(this), false);
+    this.canvas.addEventListener("mousemove", this.mousemove.bind(this), false);
 }
 
 c3d.prototype = {
     data: function(data) {
         this.data = [];
         var _data = [];
+
         for (let i in data) {
-            var __data = [];
-            for (let m in data[i]) {
-                __data.push(new point(data[i][m][0], data[i][m][1], data[i][m][2]));
-            }
-            this.data.push(new point(data[i][0]));
-            _data.push(__data);
+            _data.push(new point(data[i][0][0], data[i][0][1], data[i][0][2]))
         }
-        return _data;
+
+        for (let m in data) {
+            let __data = [];
+            for (let n in data[m]) {
+                for (let p in data) {
+                    if (data[m][n] == data[p][0]) {
+                        __data.push(_data[p])
+                    }
+                }
+            }
+            this.data.push(__data);
+        }
+        return this.data;
     },
 
     draw: function(data) {
@@ -50,9 +58,7 @@ c3d.prototype = {
                 pointArr.push({ form: _data[m][0], to: _data[m][n] });
             }
         }
-        // console.log(_data[0][0]);
-        // console.log(_data[1][1]);
-        // console.log(_data[0][0] == _data[1][1]);
+        return pointArr;
     },
     axis: function(data) {
         this.clearCanvas();
@@ -95,8 +101,8 @@ c3d.prototype = {
         this.ctx.stroke();
     },
     mousedown: function(e) {
-        this.ay = e.clientX;
-        this.ax = e.clientY;
+        this.ax = e.clientX;
+        this.ay = e.clientY;
     },
     // mousemove: function(e) {
     //     if (e.button == 0 && e.buttons == 1) {
@@ -122,14 +128,20 @@ c3d.prototype = {
 
     // }
     mousemove: function(e) {
-        //if (e.button == 0 && e.buttons == 1) {
-        //var ay = e.clientY;
-        //var ax = e.clientX;
-        for (let i in this.data) {
-            this.data[i][0].canvasX -= 10;
+        if (e.button == 0 && e.buttons == 1) {
+            var ax = e.clientX;
+            var ay = e.clientY;
+            console.log(this.ax - ax);
+            console.log(this.ay - ay);
+            for (let i in this.data) {
+                // this.data[i][0]._x;
+                this.data[i][0]._y = this.data[i][0].y + this.ax - ax;
+                // this.data[i][0]._z;
+                this.data[i][0].canvasX = this.data[i][0]._x * (1000 + this.data[i][0]._y) / 1000;
+                this.data[i][0].canvasY = this.data[i][0]._z * (1000 + this.data[i][0]._y) / 1000;
+            }
+            this.clearCanvas();
+            this.draw();
         }
-        this.clearCanvas();
-        this.draw();
-        //}
     }
 }

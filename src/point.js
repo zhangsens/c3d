@@ -4,10 +4,13 @@ function point(x, y, z) {
     this.z = z;
     this.pi = Math.PI;
     this.p = this.pi;
+    this._x = this.x;
+    this._y = this.y;
+    this._z = this.z;
     this.angleX = 3 / 4 * this.pi;
     this.angleY = 3 / 4 * this.pi;
-    this.canvasX = this.x * (1000 + this.y) / 1000; //this.x * Math.cos(this.angleX) - this.y * Math.sin(this.angleX);
-    this.canvasY = this.z * (1000 + this.y) / 1000; //this.z * Math.cos(this.angleY) - this.y * Math.sin(this.angleY);
+    this.canvasX = this._x * (1000 + this._y) / 1000; //this.x * Math.cos(this.angleX) - this.y * Math.sin(this.angleX);
+    this.canvasY = this._z * (1000 + this._y) / 1000; //this.z * Math.cos(this.angleY) - this.y * Math.sin(this.angleY);
 }
 
 function axis(x, y, z) {
