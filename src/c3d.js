@@ -5,23 +5,32 @@ var c3d = function(ctx) {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this._axis = new point(0, 0, 0);
+    this.ax = e.clientX;
+    this.ay = e.clientY;
+    this.t = new d3(100, 100, 100);
+    this._t = new d3(100, -100, 100);
     this.axis([this.width / 2, 0, this.height / 2]);
+    // this.canvas.addEventListener("mousedown", this.mousedown.bind(this), false);
+    // this.canvas.addEventListener("mousemove", this.mousemove.bind(this), false);
 }
 
 c3d.prototype = {
     data: function(data) {
+        this.data = [];
         var _data = [];
         for (let i in data) {
             var __data = [];
             for (let m in data[i]) {
                 __data.push(new point(data[i][m][0], data[i][m][1], data[i][m][2]));
             }
+            this.data.push(new point(data[i][0]));
             _data.push(__data);
         }
         return _data;
     },
 
     draw: function(data) {
+        var data = this.data;
         this.ctx.strokeStyle = "hsla(0,0%,0%,1)";
         for (let m in data) {
             for (let n in data[m]) {
@@ -50,24 +59,6 @@ c3d.prototype = {
         this.ctx.translate(-this._axis.x, -this._axis.y);
         this._axis = new axis(data[0], data[1], data[2]);
         this.ctx.translate(this._axis.x, this._axis.z);
-        //axis
-        var a = (400 - 400 * Math.cos(this._axis.angleY)) / 400 * Math.sqrt(400 * 400 - 400 * Math.cos(this._axis.angleX) * 400 * Math.cos(this._axis.angleX))
-        var b = (400 - 400 * Math.cos(this._axis.angleX)) / 400 * Math.sqrt(400 * 400 - 400 * Math.cos(this._axis.angleY) * 400 * Math.cos(this._axis.angleY))
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = "hsla(0,100%,50%,1)";
-        this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(400 * Math.cos(this._axis.angleX), a);
-        this.ctx.stroke();
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = "hsla(240,100%,50%,1)";
-        this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(-400 * Math.sin(this._axis.angleX), 400 * Math.cos(this._axis.angleY));
-        this.ctx.stroke();
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = "hsla(60,100%,50%,1)";
-        this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(0, -400 * Math.cos(this._axis.angleY));
-        this.ctx.stroke();
     },
 
     //旋转
@@ -83,7 +74,7 @@ c3d.prototype = {
     },
 
     clearCanvas: function() {
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(-this.width / 2, -this.height / 2, this.width, this.height);
     },
 
     run: function() {
@@ -92,6 +83,53 @@ c3d.prototype = {
             this.draw(this.data);
             requestAnimationFrame(this.run.bind(this));
         }
+    },
+    test: function() {
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = "hsla(10,100%,50%,1)";
+        var x = l(this.t._z, this.t._y) * Math.cos(this.t.nx) * (2000 + this.t.y) / 2000;
+        var y = l(this.t._x, this.t._y) * Math.cos(this.t.ny) * (2000 + this.t._y) / 2000;
+        console.log(this.t._z);
+        this.ctx.moveTo(0, 0);
+        this.ctx.lineTo(x, y);
+        this.ctx.stroke();
+    },
+    mousedown: function(e) {
+        this.ay = e.clientX;
+        this.ax = e.clientY;
+    },
+    // mousemove: function(e) {
+    //     if (e.button == 0 && e.buttons == 1) {
+    //         var ay = e.clientY;
+    //         var ax = e.clientX;
+    //         var nx = Math.asin((this.ax - ax) / 200);
+    //         var ny = Math.asin((this.ay - ay) / 200);
+    //         // this.t._x = this.t.x * Math.cos(Y轴);
+    //         // this.t._y = this.t.y * Math.sin(Y轴) * Math.sin(X轴);
+    //         // this.t._z = this.t.z * Math.cos(X抽);
+    //         this.t.nx = this.t.ax + nx;
+    //         this.t.ny = this.t.ax + ny;
+    //         var sx = Math.pow(Math.sin(this.t.nx), 2);
+    //         var sy = Math.pow(Math.sin(this.t.ny), 2);
+    //         this.t._y = this.t.width * Math.sqrt(sx * sy / (sx + sy - sx * sy)) || 0;
+    //         this.t._x = this.t.y / (Math.round(Math.tan(this.t.ny) * 10000) / 10000);
+    //         this.t._z = this.t.y / (Math.round(Math.tan(this.t.nx) * 10000) / 10000);
+    //         console.log(this.t._x, this.t._y, this.t._z);
 
+    //         this.clearCanvas();
+    //         this.test();
+    //     }
+
+    // }
+    mousemove: function(e) {
+        //if (e.button == 0 && e.buttons == 1) {
+        //var ay = e.clientY;
+        //var ax = e.clientX;
+        for (let i in this.data) {
+            this.data[i][0].canvasX -= 10;
+        }
+        this.clearCanvas();
+        this.draw();
+        //}
     }
 }
