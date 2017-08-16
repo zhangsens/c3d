@@ -23,6 +23,10 @@
         var f = [100, -100, 100];
         var g = [-100, 100, 100];
         var h = [100, 100, 100];
+        var i = [-100, -200, 100];
+        var j = [100, -200, 100];
+        var k = [100, -200, -100];
+        var m = [-100, -200, -100]
         var _data = [
             [a, b, c, d],
             [b, a, e, f],
@@ -32,17 +36,19 @@
             [f, b, d, h],
             [g, c, d, h],
             [h, e, f, g]
+            // [i, j, , m],
+            // [j, k, i],
+            // [k, j, m],
+            // [m, i, k]
         ];
 
         var _c3d = new c3d(ctx);
         var __data = _c3d.dereplication(_data);
-        //_c3d.data(_data);
+        _c3d.data(_data);
         //_c3d.axis([cv.width / 3, cv.height / 3, 0]);
         _c3d.draw(_data);
         //_c3d.run();
         //_c3d.test();
-
-        //history.go(0);
     </script>
 </body>
 

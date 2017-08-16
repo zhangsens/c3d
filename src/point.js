@@ -39,7 +39,7 @@ point.prototype = {
         this.cosX = this.y / Math.sqrt(this.x * this.x + this.y * this.y);
         //与z轴所成角(面yz)
         this.cosY = this.z / this.w;
-        this.sinY = Math.sqrt(this.x * this.x + this.y * this.y) / this.w;
+        this.sinY = (this.y / Math.abs(this.y)) * Math.sqrt(this.x * this.x + this.y * this.y) / this.w;
     },
     _angle: function() {
         this._sinX = this.sinX;
@@ -48,12 +48,13 @@ point.prototype = {
         this._cosY = this.cosY;
     },
     axis: function() {
-        this._x = this.w * this._sinY * this._sinX;
-        this._y = this.w * this._sinY * this._cosX;
+        this._x = this.w * Math.abs(this._sinY) * this._sinX;
+        this._y = this.w * Math.abs(this._sinY) * this._cosX;
         this._z = this.w * this._cosY;
+        //console.log(this._x * this._x + this._y * this._y + this._z * this._z);
     },
     canvas: function() {
-        this.canvasX = this._x //* (1000 + this._y) / 1000;
-        this.canvasY = -this._z //* (1000 + this._y) / 1000;
+        this.canvasX = this._x * (1000 + this._y) / 1000;
+        this.canvasY = -this._z * (1000 + this._y) / 1000;
     }
 }
