@@ -6,27 +6,54 @@ function point(x, y, z) {
 
     this.w = Math.sqrt(x * x + y * y + z * z);
     this.pi = Math.PI;
-    //与y轴所成角(面yx)
-    this.sinX = this.x / Math.sqrt(this.x * this.x + this.y * this.y);
-    this.cosX = this.y / Math.sqrt(this.x * this.x + this.y * this.y);
-    //与z轴所成角(面yz)
-    this.sinY = Math.sqrt(this.x * this.x + this.y * this.y) / this.w;
-    this.cosY = this.z / this.w;
+
+    this.angle();
 
     if (!this.sinX && !this.cosX) {
-        this._x = 0;
-        this._y = 0;
-        this._z = this.w * this.cosY;
+        // this._x = 0;
+        // this._y = 0;
+        // this._z = this.w * this.cosY;
+        this.sinX = 1;
+        this.cosX = 0;
     } else if (!this.sinY && !this.cosY) {
-        this._x = this.w * this.sinX;
-        this._y = 0;
-        this._z = 0;
+        // this._x = this.w * this.sinX;
+        // this._y = 0;
+        // this._z = 0;
+        this.sinY = 1;
+        this.cosY = 0;
     } else {
-        this._x = this.w * this.sinY * this.sinX;
-        this._y = this.w * this.sinY * this.cosX;
-        this._z = this.w * this.cosY;
+        // this._x = this.w * this.sinY * this.sinX;
+        // this._y = this.w * this.sinY * this.cosX;
+        // this._z = this.w * this.cosY;
     }
 
-    this.canvasX = this._x * (1000 + this._y) / 1000;
-    this.canvasY = -this._z * (1000 + this._y) / 1000;
+    this._angle();
+    this.axis();
+    this.canvas();
+}
+
+point.prototype = {
+    angle: function() {
+        //与y轴所成角(面yx)
+        this.sinX = this.x / Math.sqrt(this.x * this.x + this.y * this.y);
+        this.cosX = this.y / Math.sqrt(this.x * this.x + this.y * this.y);
+        //与z轴所成角(面yz)
+        this.cosY = this.z / this.w;
+        this.sinY = Math.sqrt(this.x * this.x + this.y * this.y) / this.w;
+    },
+    _angle: function() {
+        this._sinX = this.sinX;
+        this._cosX = this.cosX;
+        this._sinY = this.sinY;
+        this._cosY = this.cosY;
+    },
+    axis: function() {
+        this._x = this.w * this._sinY * this._sinX;
+        this._y = this.w * this._sinY * this._cosX;
+        this._z = this.w * this._cosY;
+    },
+    canvas: function() {
+        this.canvasX = this._x //* (1000 + this._y) / 1000;
+        this.canvasY = -this._z //* (1000 + this._y) / 1000;
+    }
 }
