@@ -95,37 +95,32 @@ c3d.prototype = {
 
             var ax = e.clientX - this.ax;
             var ay = e.clientY - this.ay;
+            ax = ax % 45 == 0 ? ax - 1 : ax;
             var sinX = Math.sin(ax * this.pi / 180);
             var cosX = Math.cos(ax * this.pi / 180);
             var sinY = Math.sin(ay * this.pi / 180);
             var cosY = Math.cos(ay * this.pi / 180);
+            console.log(ax);
 
             for (var i in this._data) {
                 //for (var i = 0; i < 1; i++) {
-                // this._data[i]._cosY = this._data[i].cosY * cosY + this._data[i].sinY * sinY;
-                // this._data[i]._sinY = Math.sqrt(1 - this._data[i]._cosY * this._data[i]._cosY);
-                // this._data[i]._sinX = this._data[i].x / this._data[i].w * this._data[i]._sinY;
-                // this._data[i]._cosX = this._data[i].y / this._data[i].w * this._data[i]._cosY;
-
-                // this._data[i]._sinX = this._data[i].sinX * cosX + this._data[i].cosX * sinX;
-                // this._data[i]._cosX = this._data[i].cosX * cosX + this._data[i].sinX * sinX;
-                // this._data[i]._cosY = this._data[i].z / this._data[i].w * this._data[i]._cosX;
-                // this._data[i]._sinY = this._data[i].y / this._data[i].w * this._data[i]._sinX;
 
                 //X+x
-                //y轴？？
-                // this._data[i]._sinX = this._data[i].sinX * cosX + this._data[i].cosX * sinX;
-                // this._data[i]._cosX = this._data[i].cosX * cosX + this._data[i].sinX * sinX;
+                this._data[i]._sinX = this._data[i].sinX * cosX + this._data[i].cosX * sinX;
+                this._data[i]._cosX = this._data[i].cosX * cosX - this._data[i].sinX * sinX;
+
+                //this._data[i].__aAngleY();
+
                 //Y+y
-                this._data[i]._cosY = this._data[i].cosY * cosY + this._data[i].sinY * sinY;
-                this._data[i]._sinY = Math.sqrt(1 - this._data[i]._cosY * this._data[i]._cosY);
+                // this._data[i]._sinY = this._data[i].sinY * cosY + this._data[i].cosY * sinY;
+                // this._data[i]._cosY = this._data[i].cosY * cosY - this._data[i].sinY * sinY;
 
-                //转动Z轴  x不变，z、y改变
-                //转动Y轴  z不变，x，y改变
-                // cos² = cos² x * cos² y / (sin² x * xin² y + cos² x);
-                // sin² = 1 - cos²;
-
+                //this._data[i].__angle();
                 this._data[i].axis();
+
+                // if (i == 0) {
+                //     console.log(this._data[i]._z);
+                // }
                 this._data[i].canvas();
             }
 
