@@ -5,17 +5,20 @@ var c3d = function(ctx) {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
 
-    this._axis = [0, 0];
-    this.ax = e.clientX;
-    this.ay = e.clientY;
-    this.axis([this.width / 2, this.height / 2]);
+    this.rotateX = 0;
+    this.rotateY = 0;
+
+    var axis = [this.width / 2, this.height / 2]
+    this.axis(axis);
+    var center = [0, 1000, 0];
+    this.camera(center);
 
     this.pi = Math.PI;
 
     //动画播放
     this.played = true;
 
-    this.canvas.addEventListener("mousemove", this.mousemove.bind(this), false);
+    this.canvas.addEventListener("mousemove", this.cameraRotate.bind(this), false);
 }
 
 c3d.prototype = {
@@ -24,7 +27,7 @@ c3d.prototype = {
         this._data = [];
 
         for (let i in data) {
-            this._data.push(new point(data[i][0][0], data[i][0][1], data[i][0][2]))
+            this._data.push(new point(data[i][0][0], data[i][0][1], data[i][0][2], this.center.y))
         }
 
         for (let m in data) {
@@ -66,11 +69,18 @@ c3d.prototype = {
         // return pointArr;
     },
 
-    axis: function(data) {
-        this._axis = data;
+    axis: function(axis) {
+        this._axis = axis;
         this.ax = this._axis[0];
         this.ay = this._axis[1];
         this.ctx.translate(this._axis[0], this._axis[1]);
+    },
+
+    camera: function(center) {
+        this.center = new Object();
+        this.center.x = center[0];
+        this.center.y = center[1];
+        this.center.z = center[2];
     },
 
     clearCanvas: function() {
@@ -86,46 +96,41 @@ c3d.prototype = {
     },
 
     mousedown: function(e) {
-        //this.ax = e.clientX;
-        //this.ay = e.clientY;
+        this.ax = e.clientX;
+        this.ay = e.clientY;
     },
 
-    mousemove: function(e) {
-        if (e.button == 0 && e.buttons == 1) {
+    cameraRotate: function(e) {
 
-            var ax = e.clientX - this.ax;
-            var ay = e.clientY - this.ay;
-            ax = ax % 45 == 0 ? ax - 1 : ax;
-            var sinX = Math.sin(ax * this.pi / 180);
-            var cosX = Math.cos(ax * this.pi / 180);
-            var sinY = Math.sin(ay * this.pi / 180);
-            var cosY = Math.cos(ay * this.pi / 180);
-            console.log(ax);
+        var ax = e.clientX - this.ax;
+        var ay = e.clientY - this.ay;
 
-            for (var i in this._data) {
-                //for (var i = 0; i < 1; i++) {
+        this.rotateX = ax / 10;
+        this.rotateY = ay / 10;
 
-                //X+x
-                this._data[i]._sinX = this._data[i].sinX * cosX + this._data[i].cosX * sinX;
-                this._data[i]._cosX = this._data[i].cosX * cosX - this._data[i].sinX * sinX;
+        var sinX = Math.sin(this.rotateX * this.pi / 180);
+        var cosX = Math.cos(this.rotateX * this.pi / 180);
+        var sinY = Math.sin(this.rotateY * this.pi / 180);
+        var cosY = Math.cos(this.rotateY * this.pi / 180);
 
-                //this._data[i].__aAngleY();
+        for (let i in this._data) {
 
-                //Y+y
-                // this._data[i]._sinY = this._data[i].sinY * cosY + this._data[i].cosY * sinY;
-                // this._data[i]._cosY = this._data[i].cosY * cosY - this._data[i].sinY * sinY;
+            let x = this._data[i].x - this.center.x;
+            let y = this._data[i].y - this.center.y;
+            let z = this._data[i].z - this.center.z;
+            //(x,y)
+            this._data[i]._x = x * cosX + y * sinX + this.center.x;
+            this._data[i]._y = x * sinX - y * cosX + this.center.y;
 
-                //this._data[i].__angle();
-                this._data[i].axis();
+            y = this._data[i]._y - this.center.y;
+            //(z,y)
+            this._data[i]._z = z * cosY + y * sinY + this.center.z;
+            this._data[i]._y = z * sinY - y * cosY + this.center.y;
 
-                // if (i == 0) {
-                //     console.log(this._data[i]._z);
-                // }
-                this._data[i].canvas();
-            }
-
-            this.clearCanvas();
-            this.draw(this.datas);
+            this._data[i].canvas();
         }
+
+        this.clearCanvas();
+        this.draw();
     }
 }
