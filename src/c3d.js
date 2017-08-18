@@ -17,12 +17,11 @@ var c3d = function(ctx) {
 
     //动画播放
     this.played = true;
-
-    this.canvas.addEventListener("mousemove", this.cameraRotate.bind(this), false);
 }
 
 c3d.prototype = {
     data: function(data) {
+        var datas;
         this.datas = [];
         this._data = [];
 
@@ -41,32 +40,88 @@ c3d.prototype = {
             }
             this.datas.push(__data);
         }
+
+        datas = this.dereplication(this.datas);
+        this.datas = this.arrClean(datas);
+
         return this.datas;
     },
 
-    draw: function() {
-        var data = this.datas;
-        this.ctx.strokeStyle = "hsla(0,0%,0%,1)";
-        for (let m in data) {
-            for (let n in data[m]) {
-                this.ctx.beginPath();
-                this.ctx.moveTo(data[m][0].canvasX, data[m][0].canvasY);
-                this.ctx.lineTo(data[m][n].canvasX, data[m][n].canvasY);
-                //ctx.arc(data[m][n].canvasX, data[m][n].canvasY, 10, 0, 2 * Math.PI);
-                this.ctx.stroke();
+    dereplication: function(datas) {
+        var data = datas;
+        var pointArr = this.arrApart(data);
+
+        for (let m in pointArr) {
+            let a, b;
+
+            for (let n = 0; n < m; n++) {
+                if (pointArr[n]) {
+                    a = pointArr[n].indexOf(pointArr[m][0]);
+                    b = pointArr[n].indexOf(pointArr[m][1]);
+                    if (a >= 0 && b >= 0) {
+                        delete pointArr[m];
+                        break;
+                    }
+                } else {
+                    continue;
+                }
+            }
+
+        }
+
+        return pointArr;
+    },
+
+    arrApart: function(array) {
+        var _array = new Array();
+
+        for (let m in array) {
+            for (var n = 1; n < array[m].length; n++) {
+                _array.push([array[m][0], array[m][n]])
             }
         }
+
+        return _array;
     },
-    //去重
-    dereplication: function(data) {
-        // var _data = data;
-        // var pointArr = [];
-        // for (let m in _data) {
-        //     for (let n in _data[m]) {
-        //         pointArr.push({ form: _data[m][0], to: _data[m][n] });
-        //     }
-        // }
-        // return pointArr;
+
+    arrClean: function(array) {
+        for (let i = 0; i < array.length; i++) {
+            if (!array[i]) {
+                array.splice(i, 1);
+                i--;
+            }
+        }
+        return array;
+    },
+
+    draw: function(callback) {
+        var data = this.datas;
+        this.ctx.strokeStyle = "hsla(0,0%,0%,1)";
+
+        for (let m in data) {
+            for (let n = 1; n < data[m].length; n++) {
+
+                if (typeof(callback) == "function") {
+                    callback(data[m][n].canvasX, data[m][n].canvasY, this.ctx);
+                } else {
+                    callback = undefined;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(data[m][0].canvasX, data[m][0].canvasY);
+                    this.ctx.lineTo(data[m][n].canvasX, data[m][n].canvasY);
+                    this.ctx.stroke();
+                }
+
+            }
+        }
+
+        //this.info = runInfo("draw", callback);
+    },
+
+    _draw: function(callback) {
+        //自定义绘制
+        callback(this.datas, this.ctx);
+
+        //this.info = runInfo("_draw", callback)
     },
 
     axis: function(axis) {
@@ -100,13 +155,29 @@ c3d.prototype = {
         this.ay = e.clientY;
     },
 
-    cameraRotate: function(e) {
+    cameraRotate: function(x, y, fixed) {
+        //fixed:true or false;
+        var center = new Object();
+        var time;
+        if (fixed) {
+            center.x = 0;
+            center.y = 0;
+            center.z = 0;
+            times = 1;
+        } else {
+            center.x = this.center.x;
+            center.y = this.center.y;
+            center.z = this.center.z;
+            times = 10;
+        }
+        var clientX = e.clientX;
+        var clientY = e.clientY;
 
-        var ax = e.clientX - this.ax;
-        var ay = e.clientY - this.ay;
+        var ax = x - this.ax;
+        var ay = y - this.ay;
 
-        this.rotateX = ax / 10;
-        this.rotateY = ay / 10;
+        this.rotateX = ax / times;
+        this.rotateY = ay / times;
 
         var sinX = Math.sin(this.rotateX * this.pi / 180);
         var cosX = Math.cos(this.rotateX * this.pi / 180);
@@ -115,17 +186,18 @@ c3d.prototype = {
 
         for (let i in this._data) {
 
-            let x = this._data[i].x - this.center.x;
-            let y = this._data[i].y - this.center.y;
-            let z = this._data[i].z - this.center.z;
-            //(x,y)
-            this._data[i]._x = x * cosX + y * sinX + this.center.x;
-            this._data[i]._y = x * sinX - y * cosX + this.center.y;
+            let x = this._data[i].x - center.x;
+            let y = this._data[i].y - center.y;
+            let z = this._data[i].z - center.z;
 
-            y = this._data[i]._y - this.center.y;
+            //(x,y)
+            this._data[i]._x = x * cosX + y * sinX + center.x;
+            this._data[i]._y = x * sinX - y * cosX + center.y;
+
+            y = this._data[i]._y - center.y;
             //(z,y)
-            this._data[i]._z = z * cosY + y * sinY + this.center.z;
-            this._data[i]._y = z * sinY - y * cosY + this.center.y;
+            this._data[i]._z = z * cosY + y * sinY + center.z;
+            this._data[i]._y = z * sinY - y * cosY + center.y;
 
             this._data[i].canvas();
         }

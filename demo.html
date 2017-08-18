@@ -43,12 +43,21 @@
         ];
 
         var _c3d = new c3d(ctx);
-        var __data = _c3d.dereplication(_data);
-        _c3d.data(_data);
-        //_c3d.axis([cv.width / 3, cv.height / 3, 0]);
-        _c3d.draw(_data);
-        //_c3d.run();
-        //_c3d.test();
+
+        var test = _c3d.data(_data);
+        _c3d.draw();
+
+        //_c3d._draw(draw);
+
+        function draw(d) {
+            console.log(d);
+        }
+
+        cv.addEventListener("mousemove", function(e) {
+            var x = e.clientX;
+            var y = e.clientY;
+            _c3d.cameraRotate(x, y, true);
+        }, false);
     </script>
 </body>
 
