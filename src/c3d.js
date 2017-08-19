@@ -24,7 +24,6 @@ c3d.prototype = {
         var datas;
         this.datas = [];
         this._data = [];
-
         for (let i in data) {
             this._data.push(new point(data[i][0][0], data[i][0][1], data[i][0][2], this.center.y))
         }
@@ -40,7 +39,7 @@ c3d.prototype = {
             }
             this.datas.push(__data);
         }
-
+        console.log(this.datas);
         datas = this.dereplication(this.datas);
         this.datas = this.arrClean(datas);
 
@@ -114,14 +113,14 @@ c3d.prototype = {
             }
         }
 
-        //this.info = runInfo("draw", callback);
+        this.info = runInfo("draw", callback);
     },
 
     _draw: function(callback) {
-        //自定义绘制
+        //自定义
         callback(this.datas, this.ctx);
 
-        //this.info = runInfo("_draw", callback)
+        this.info = runInfo("_draw", callback)
     },
 
     axis: function(axis) {
@@ -168,7 +167,7 @@ c3d.prototype = {
             center.x = this.center.x;
             center.y = this.center.y;
             center.z = this.center.z;
-            times = 10;
+            times = 30;
         }
         var clientX = e.clientX;
         var clientY = e.clientY;
@@ -203,6 +202,7 @@ c3d.prototype = {
         }
 
         this.clearCanvas();
-        this.draw();
+
+        this[this.info.fn](this.info.callback);
     }
 }

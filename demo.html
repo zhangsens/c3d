@@ -5,13 +5,15 @@
 </head>
 
 <body>
-    <canvas width="1200" height="800"></canvas>
+    <canvas style="display:block;margin:auto;" width="800" height="400"></canvas>
+    <img style="display:none;" src="http://wx1.sinaimg.cn/large/7964bc64gy1fic5g7icyyj22gk0kuqji.jpg">
     <script src="./src/tools.js"></script>
     <script src="./src/point.js"></script>
     <script src="./src/c3d.js"></script>
     <script>
         const cv = document.querySelector("canvas");
         const ctx = cv.getContext("2d");
+        const img = document.querySelector("img");
         //人类的视野范围大概120°
         const video = [600, 400, 0];
 
@@ -26,37 +28,68 @@
         var i = [-100, -200, 100];
         var j = [100, -200, 100];
         var k = [100, -200, -100];
-        var m = [-100, -200, -100]
-        var _data = [
-            [a, b, c, d],
-            [b, a, e, f],
-            [c, a, e, g],
-            [d, a, f, g],
-            [e, c, b, h],
-            [f, b, d, h],
-            [g, c, d, h],
-            [h, e, f, g],
-            [i, j, m],
-            [j, k, i],
-            [k, j, m],
-            [m, i, k]
-        ];
+        var m = [-100, -200, -100];
+        // var _data = [
+        //     [a, b, c, d],
+        //     [b, a, e, f],
+        //     [c, a, e, g],
+        //     [d, a, f, g],
+        //     [e, c, b, h],
+        //     [f, b, d, h],
+        //     [g, c, d, h],
+        //     [h, e, f, g],
+        //     [i, j, m],
+        //     [j, k, i],
+        //     [k, j, m],
+        //     [m, i, k]
+        // ];
+
+        var _data = [];
+        var x = 0;
+        var y = -800;
+        //var num = 180 / img.width;
+        var num = 180 * 3 / img.width;
+        for (let i = -90; i < 90; i = i + num) {
+            let ax = x * Math.cos(i * Math.PI / 180) - y * Math.sin(i * Math.PI / 180);
+            let ay = x * Math.sin(i * Math.PI / 180) + y * Math.cos(i * Math.PI / 180);
+            let u = [ax, ay, 600];
+            let d = [ax, ay, -600];
+            _data.push([u, d]);
+            _data.push([d, u]);
+        }
 
         var _c3d = new c3d(ctx);
 
-        var test = _c3d.data(_data);
-        _c3d.draw();
+        _c3d.data(_data);
+        //_c3d.draw();
 
-        //_c3d._draw(draw);
+        _c3d._draw(draw);
 
-        function draw(d) {
-            console.log(d);
+        function draw(d, ctx) {
+            var data = d;
+            ctx.strokeStyle = "hsla(0,0%,0%,1)";
+
+            for (let m in data) {
+                for (let n = 1; n < data[m].length; n++) {
+                    ctx.drawImage(
+                        img,
+                        img.width / data.length * n * (parseInt(m) + 1),
+                        0,
+                        img.width / data.length,
+                        img.height,
+                        data[m][0].canvasX,
+                        data[m][0].canvasY - 80,
+                        img.width / data.length,
+                        Math.abs(data[m][0].canvasY - data[m][n].canvasY) * 1.7
+                    );
+                }
+            }
         }
 
         cv.addEventListener("mousemove", function(e) {
-            var x = e.clientX;
-            var y = e.clientY;
-            _c3d.cameraRotate(x, y, true);
+            var x = e.offsetX;
+            var y = e.offsetY;
+            _c3d.cameraRotate(x, cv.height / 2, false);
         }, false);
     </script>
 </body>
