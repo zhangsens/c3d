@@ -5,4 +5,4 @@ function runInfo(fn, callback) {
     }
 }
 
-//export { runInfo }
+module.exports = { runInfo }

@@ -5,11 +5,9 @@
 </head>
 
 <body>
-    <canvas style="display:block;margin:auto;" width="800" height="400"></canvas>
+    <canvas style="display:block;margin:auto;" width="1200" height="800"></canvas>
     <img style="display:none;" src="http://wx1.sinaimg.cn/large/7964bc64gy1fic5g7icyyj22gk0kuqji.jpg">
-    <script src="./src/tools.js"></script>
-    <script src="./src/point.js"></script>
-    <script src="./src/c3d.js"></script>
+    <script src="./dist/c3d.min.js"></script>
     <script>
         const cv = document.querySelector("canvas");
         const ctx = cv.getContext("2d");
@@ -70,18 +68,20 @@
             ctx.strokeStyle = "hsla(0,0%,0%,1)";
 
             for (let m in data) {
-                for (let n = 1; n < data[m].length; n++) {
-                    ctx.drawImage(
-                        img,
-                        img.width / data.length * n * (parseInt(m) + 1),
-                        0,
-                        img.width / data.length,
-                        img.height,
-                        data[m][0].canvasX,
-                        data[m][0].canvasY - 80,
-                        img.width / data.length,
-                        Math.abs(data[m][0].canvasY - data[m][n].canvasY) * 1.7
-                    );
+                if (m == 0 || (m >= 1 && data[m][0].canvasX > data[m - 1][0].canvasX)) {
+                    for (let n = 1; n < data[m].length; n++) {
+                        ctx.drawImage(
+                            img,
+                            img.width / data.length * n * (parseInt(m) + 1),
+                            0,
+                            img.width / data.length,
+                            img.height,
+                            data[m][0].canvasX,
+                            data[m][0].canvasY - 80,
+                            img.width / data.length,
+                            Math.abs(data[m][0].canvasY - data[m][n].canvasY) + 200
+                        );
+                    }
                 }
             }
         }

@@ -1,3 +1,6 @@
+const point = require("./point");
+const tools = require("./tools");
+
 var c3d = function(ctx) {
 
     this.ctx = ctx;
@@ -39,7 +42,7 @@ c3d.prototype = {
             }
             this.datas.push(__data);
         }
-        console.log(this.datas);
+
         datas = this.dereplication(this.datas);
         this.datas = this.arrClean(datas);
 
@@ -113,14 +116,14 @@ c3d.prototype = {
             }
         }
 
-        this.info = runInfo("draw", callback);
+        this.info = tools.runInfo("draw", callback);
     },
 
     _draw: function(callback) {
         //自定义
         callback(this.datas, this.ctx);
 
-        this.info = runInfo("_draw", callback)
+        this.info = tools.runInfo("_draw", callback)
     },
 
     axis: function(axis) {
@@ -157,7 +160,7 @@ c3d.prototype = {
     cameraRotate: function(x, y, fixed) {
         //fixed:true or false;
         var center = new Object();
-        var time;
+        var times;
         if (fixed) {
             center.x = 0;
             center.y = 0;
@@ -206,3 +209,5 @@ c3d.prototype = {
         this[this.info.fn](this.info.callback);
     }
 }
+
+module.exports = c3d;

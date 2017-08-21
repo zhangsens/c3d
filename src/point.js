@@ -48,3 +48,5 @@ point.prototype = {
         this.canvasY = -this._z * (this.far + this._y) / this.far;
     }
 }
+
+module.exports = point;
