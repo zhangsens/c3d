@@ -47,11 +47,19 @@
         var y = -800;
         //var num = 180 / img.width;
         var num = 180 * 3 / img.width;
-        for (let i = -90; i < 90; i = i + num) {
+        for (let i = -90; i < 0; i = i + num) {
             let ax = x * Math.cos(i * Math.PI / 180) - y * Math.sin(i * Math.PI / 180);
             let ay = x * Math.sin(i * Math.PI / 180) + y * Math.cos(i * Math.PI / 180);
             let u = [ax, ay, 600];
             let d = [ax, ay, -600];
+            _data.push([u, d]);
+            _data.push([d, u]);
+        }
+        for (let i = 0; i < 90; i = i + num) {
+            let ax = x + i * 100;
+            //let ay = x * Math.sin(i * Math.PI / 180) + y * Math.cos(i * Math.PI / 180);
+            let u = [ax, y, 600];
+            let d = [ax, y, -600];
             _data.push([u, d]);
             _data.push([d, u]);
         }
@@ -70,6 +78,7 @@
             for (let m in data) {
                 if (m == 0 || (m >= 1 && data[m][0].canvasX > data[m - 1][0].canvasX)) {
                     for (let n = 1; n < data[m].length; n++) {
+                        //if (m < )
                         ctx.drawImage(
                             img,
                             img.width / data.length * n * (parseInt(m) + 1),

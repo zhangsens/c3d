@@ -22,3 +22,5 @@ data中的数据为某点与其相连的其他点的数组
 .draw:绘制模型
 
 绘制结束后得到一个正面朝着屏幕的模型
+
+[demo](https://zhangsens.github.io/demo/canvas3D.html)
